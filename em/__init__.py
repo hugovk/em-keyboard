@@ -63,7 +63,7 @@ def do_find(lookup, term):
             space[keyword].append(name)
         space[definition["category"]].append(name)
 
-    matches = fnmatch.filter(space.keys(), term)
+    matches = fnmatch.filter(space.keys(), u"*" + term + u"*")
 
     results = set()
     for match in matches:
