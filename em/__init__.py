@@ -2,26 +2,24 @@
 
 Examples:
 
-  $ em sparkle cake sparkles
-  $ em heart
+  $ em sparkle shortcake sparkles
+  $ em red_heart
 
   $ em -s food
 
 Notes:
   - If all names provided map to emojis, the resulting emojis will be
     automatically added to your clipboard.
-  - ✨ 🍰 ✨  (sparkles cake sparkles)
+  - ✨ 🍰 ✨  (sparkles shortcake sparkles)
 """
 
 
 import argparse
-import fnmatch
 import itertools
 import json
 import os
 import re
 import sys
-from collections import defaultdict
 
 import pkg_resources
 
@@ -32,7 +30,7 @@ except ImportError:
 
 __version__: str = pkg_resources.get_distribution("em-keyboard").version
 
-EMOJI_PATH = os.path.join(os.path.dirname(__file__), "emojis.json")
+EMOJI_PATH = os.path.join(os.path.dirname(__file__), "emoji-en-US.json")
 CUSTOM_EMOJI_PATH = os.path.join(os.path.expanduser("~/.emojis.json"))
 
 
@@ -40,36 +38,30 @@ def parse_emojis(filename=EMOJI_PATH):
     return json.load(open(filename, encoding="utf-8"))
 
 
-def translate(lookup, code):
+def translate(lookup: dict, code: str) -> list:
     output = []
     if code[0] == ":" and code[-1] == ":":
         code = code[1:-1]
 
-    output.append(lookup.get(code, {"char": None})["char"])
+    for emoji, keywords in lookup.items():
+        if code == keywords[0]:
+            output.append(emoji)
+            break
+    else:
+        output.append(None)
 
     return output
 
 
-def do_find(lookup, term):
-    """Matches term glob against short-name, keywords and categories."""
+def do_find(lookup: dict, term: str) -> list:
+    """Match term against keywords."""
+    output = []
 
-    space = defaultdict(list)
+    for emoji, keywords in lookup.items():
+        if term in keywords:
+            output.append((keywords[0], [emoji]))
 
-    for name in lookup.keys():
-        space[name].append(name)
-
-    for name, definition in lookup.items():
-        for keyword in definition["keywords"]:
-            space[keyword].append(name)
-        space[definition["category"]].append(name)
-
-    matches = fnmatch.filter(space.keys(), term)
-
-    results = set()
-    for match in matches:
-        results.update(space[match])
-
-    return [(r, translate(lookup, r)) for r in results]
+    return output
 
 
 def clean_name(name):

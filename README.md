@@ -22,7 +22,7 @@ Emoji can be also searched by both categories and aspects.
 Let's serve some delicious cake:
 
 ```console
-$ em sparkles cake sparkles
+$ em sparkles shortcake sparkles
 Copied! ✨🍰✨
 ```
 
@@ -37,10 +37,12 @@ Let's find some emoji, by color:
 
 ```console
 $ em -s red
-🚗  car
+🥵  hot_face
+👹  ogre
+👺  goblin
+🚗  automobile
 🎴  flower_playing_cards
-👹  japanese_ogre
-👺  japanese_goblin
+❌  cross_mark
 ```
 
 ## Installation
