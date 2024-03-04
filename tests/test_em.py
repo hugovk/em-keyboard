@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, call, patch
 
 import pytest
 
-from em_keyboard import cli, copier  # type: ignore[import-untyped]
+from em_keyboard import cli, get_copier  # type: ignore[import-untyped]
 
 
 @pytest.mark.parametrize(
@@ -31,7 +31,7 @@ def test_star(mock_print: MagicMock, mock_argparse: MagicMock, test_name: str) -
         cli()
 
     # Assert
-    if copier:
+    if get_copier():
         mock_print.assert_called_once_with("Copied! ⭐")
     else:
         mock_print.assert_called_once_with("⭐")
@@ -113,7 +113,7 @@ def test_search_single_result_is_copied(
         cli()
 
     # Assert
-    if copier:
+    if get_copier():
         mock_print.assert_called_once_with("Copied! 🇺🇦  flag_ukraine")
     else:
         mock_print.assert_called_once_with("🇺🇦  flag_ukraine")
@@ -153,7 +153,7 @@ def test_random(mock_print: MagicMock, mock_argparse: MagicMock) -> None:
         cli()
 
     # Assert
-    if copier:
+    if get_copier():
         mock_print.assert_called_once_with("Copied! 😽  kissing_cat")
     else:
         mock_print.assert_called_once_with("😽  kissing_cat")

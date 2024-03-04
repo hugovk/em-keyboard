@@ -23,15 +23,16 @@ import random
 import re
 import sys
 
-try:
-    import pyperclip as copier  # type: ignore[import]
-except ImportError:
-    try:
-        import xerox as copier  # type: ignore[import]
-    except ImportError:
-        copier = None
-
 __version__: str = importlib.metadata.version("em_keyboard")
+
+if sys.version_info >= (3, 9):
+    from functools import cache
+
+    EmojiDict = dict[str, list[str]]
+else:
+    from functools import lru_cache as cache
+
+    EmojiDict = "dict[str, list[str]]"
 
 try:
     from importlib.resources import as_file, files
@@ -46,8 +47,18 @@ except ImportError:
 
 CUSTOM_EMOJI_PATH = os.path.join(os.path.expanduser("~/.emojis.json"))
 
-# TODO Remove quotes when dropping Python 3.8
-EmojiDict = "dict[str, list[str]]"
+
+@cache
+def get_copier():
+    try:
+        import pyperclip as copier  # type: ignore[import]
+    except ImportError:
+        try:
+            import xerox as copier  # type: ignore[import]
+        except ImportError:
+            copier = None
+
+    return copier
 
 
 def parse_emojis(filename: str | os.PathLike[str] = EMOJI_PATH) -> EmojiDict:
@@ -115,7 +126,7 @@ def cli() -> None:
     if args.random:
         emoji, keywords = random.choice(list(lookup.items()))
         name = keywords[0]
-        if copier and not no_copy:
+        if not no_copy and (copier := get_copier()):
             copier.copy(emoji)
             print(f"Copied! {emoji}  {name}")
         else:
@@ -140,7 +151,7 @@ def cli() -> None:
             # Some registered emoji have no value.
             try:
                 # Copy the results (and say so!) to the clipboard.
-                if copier and not no_copy and len(found) == 1:
+                if not no_copy and len(found) == 1 and (copier := get_copier()):
                     copier.copy(emoji)
                     print(f"Copied! {emoji}  {name}")
                 else:
@@ -169,7 +180,7 @@ def cli() -> None:
     results = "".join(results)
 
     # Copy the results (and say so!) to the clipboard.
-    if copier and not no_copy and not missing:
+    if not no_copy and not missing and (copier := get_copier()):
         copier.copy(results)
         print(f"Copied! {print_results}")
 
