@@ -6,6 +6,7 @@
 [![GitHub Actions status](https://github.com/hugovk/em-keyboard/workflows/Test/badge.svg)](https://github.com/hugovk/em-keyboard/actions)
 [![codecov](https://codecov.io/gh/hugovk/em-keyboard/branch/main/graph/badge.svg)](https://codecov.io/gh/hugovk/em-keyboard)
 [![GitHub](https://img.shields.io/github/license/hugovk/em-keyboard.svg)](LICENSE)
+[![Code style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)](https://github.com/psf/black)
 
 **Emoji your friends and colleagues from the comfort of your own terminal.**
 

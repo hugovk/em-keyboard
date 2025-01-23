@@ -1,31 +1,16 @@
-"""em: the technicolor cli emoji keyboard
-
-Examples:
-
-  $ em sparkle shortcake sparkles
-  $ em red_heart
-
-  $ em -s food
-
-Notes:
-  - If all names provided map to emojis, the resulting emojis will be
-    automatically added to your clipboard.
-  - ✨ 🍰 ✨  (sparkles shortcake sparkles)
+"""
+CLI for em
 """
 
 from __future__ import annotations
 
 import argparse
 import os
-import sys
-
-from em_keyboard import _version
-
-__version__ = _version.__version__
-
 from importlib.resources import as_file, files
 
-with as_file(files("em_keyboard").joinpath("emojis.json")) as em_json:
+from em import __version__
+
+with as_file(files("em").joinpath("emojis.json")) as em_json:
     EMOJI_PATH = em_json
 
 CUSTOM_EMOJI_PATH = os.path.join(os.path.expanduser("~/.emojis.json"))
@@ -82,8 +67,7 @@ def clean_name(name: str) -> str:
     return name.replace("-", "_").replace(" ", "_").lower()
 
 
-def cli() -> None:
-    # CLI argument parsing.
+def parse_args(arg_list: list[str] | None):
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -96,11 +80,16 @@ def cli() -> None:
     parser.add_argument(
         "-V", "--version", action="version", version=f"%(prog)s {__version__}"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(arg_list)
+    return args
+
+
+def main(arg_list: list[str] | None = None) -> str | int:
+    args = parse_args(arg_list)
     no_copy = args.no_copy
 
     if not args.name and not args.random:
-        sys.exit("Error: the 'name' argument is required")
+        return "Error: the 'name' argument is required"
 
     # Grab the lookup dictionary.
     lookup = parse_emojis()
@@ -118,7 +107,7 @@ def cli() -> None:
         else:
             copied = False
         print(f"Copied! {emoji}  {name}" if copied else f"{emoji}  {name}")
-        sys.exit(0)
+        return 0
 
     names = tuple(map(clean_name, args.name))
 
@@ -146,9 +135,9 @@ def cli() -> None:
                 pass
 
         if len(found):
-            sys.exit(0)
+            return 0
         else:
-            sys.exit(1)
+            return 1
 
     # Process the results.
     results = tuple(translate(lookup, name) for name in names)
@@ -171,8 +160,8 @@ def cli() -> None:
     if print_results:
         print(f"Copied! {print_results}" if copied else print_results)
 
-    sys.exit(int(missing))
+    return int(missing)
 
 
 if __name__ == "__main__":
-    cli()
+    main()
