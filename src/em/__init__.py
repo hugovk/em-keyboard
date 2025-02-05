@@ -15,6 +15,6 @@ Notes:
 
 from __future__ import annotations
 
-from em import _version
+from em import _version  # type: ignore[attr-defined]
 
 __version__ = _version.__version__
