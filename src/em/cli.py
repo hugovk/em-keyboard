@@ -6,17 +6,8 @@ from __future__ import annotations
 
 import argparse
 import os
-import sys
-from importlib.resources import files
-
-if sys.version_info >= (3, 11):
-    from importlib.resources.abc import Traversable
-else:
-    from importlib.abc import Traversable
 
 from em import __version__
-
-EMOJI_PATH = files("em").joinpath("emojis.json")
 
 CUSTOM_EMOJI_PATH = os.path.join(os.path.expanduser("~/.emojis.json"))
 
@@ -41,14 +32,16 @@ def try_copy_to_clipboard(text: str) -> bool:
     return True
 
 
-def parse_emojis(filename: str | Traversable = EMOJI_PATH) -> EmojiDict:
+def parse_emojis(filename: str | None = None) -> EmojiDict:
     import json
 
-    with (
-        open(filename, encoding="utf-8")
-        if isinstance(filename, str)
-        else filename.open(encoding="utf-8")
-    ) as f:
+    if filename is None:
+        from importlib.resources import files
+
+        emoji_traversable = files("em").joinpath("emojis.json")
+        return json.loads(emoji_traversable.read_text("utf-8"))
+
+    with open(filename, encoding="utf-8") as f:
         return json.load(f)
 
 
