@@ -5,7 +5,7 @@ import shlex
 
 import pytest
 
-from em import cli  # type: ignore[import-untyped]
+from em import cli
 
 copier_deps_installed = cli.try_copy_to_clipboard("checking if copy works")
 
@@ -24,7 +24,7 @@ copier_deps_installed = cli.try_copy_to_clipboard("checking if copy works")
     ],
 )
 def test_success(
-    test_args: str, expected_output: str, capsys: pytest.LogCaptureFixture
+    test_args: str, expected_output: str, capsys: pytest.CaptureFixture
 ) -> None:
     # Arrange
     random.seed(123)
@@ -49,7 +49,7 @@ def test_success(
         "--search",
     ],
 )
-def test_error(test_args: str, capsys: pytest.LogCaptureFixture) -> None:
+def test_error(test_args: str, capsys: pytest.CaptureFixture) -> None:
     # Act
     ret = cli.main(shlex.split(test_args))
 
@@ -59,7 +59,7 @@ def test_error(test_args: str, capsys: pytest.LogCaptureFixture) -> None:
     assert ret != 0
 
 
-def test_search_star(capsys: pytest.LogCaptureFixture) -> None:
+def test_search_star(capsys: pytest.CaptureFixture) -> None:
     # Arrange
     args = "--search star"
     expected = (

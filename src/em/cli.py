@@ -6,12 +6,8 @@ from __future__ import annotations
 
 import argparse
 import os
-from importlib.resources import as_file, files
 
 from em import __version__
-
-with as_file(files("em").joinpath("emojis.json")) as em_json:
-    EMOJI_PATH = em_json
 
 CUSTOM_EMOJI_PATH = os.path.join(os.path.expanduser("~/.emojis.json"))
 
@@ -36,10 +32,17 @@ def try_copy_to_clipboard(text: str) -> bool:
     return True
 
 
-def parse_emojis(filename: str | os.PathLike[str] = EMOJI_PATH) -> EmojiDict:
+def parse_emojis(filename: str | None = None) -> EmojiDict:
     import json
 
-    return json.load(open(filename, encoding="utf-8"))
+    if filename is None:
+        from importlib.resources import files
+
+        emoji_traversable = files("em").joinpath("emojis.json")
+        return json.loads(emoji_traversable.read_text("utf-8"))
+
+    with open(filename, encoding="utf-8") as f:
+        return json.load(f)
 
 
 def translate(lookup: EmojiDict, code: str) -> str | None:
@@ -111,9 +114,6 @@ def main(arg_list: list[str] | None = None) -> str | int:
 
     names = tuple(map(clean_name, args.name))
 
-    # Marker for if the given emoji isn't found.
-    missing = False
-
     # Search mode.
     if args.search:
         # Lookup the search term.
@@ -140,20 +140,22 @@ def main(arg_list: list[str] | None = None) -> str | int:
             return 1
 
     # Process the results.
-    results = tuple(translate(lookup, name) for name in names)
+    unfiltered_results = tuple(translate(lookup, name) for name in names)
+    results = tuple(r for r in unfiltered_results if r is not None)
 
-    if None in results:
+    if len(results) < len(unfiltered_results):
         no_copy = True
-        missing = True
-        results = tuple(r for r in results if r)
+        missing = True  # Marker for if the given emoji isn't found.
+    else:
+        missing = False
 
     # Prepare the result strings.
     print_results = " ".join(results)
-    results = "".join(results)
+    copy_results = "".join(results)
 
     # Copy the results (and say so!) to the clipboard.
     if not no_copy and not missing:
-        copied = try_copy_to_clipboard(results)
+        copied = try_copy_to_clipboard(copy_results)
     else:
         copied = False
 
