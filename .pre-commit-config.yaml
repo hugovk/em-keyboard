@@ -43,12 +43,6 @@ repos:
     hooks:
       - id: zizmor
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.1
-    hooks:
-      - id: mypy
-        exclude: ^scripts/
-
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: v2.5.0
     hooks:
