@@ -523,15 +523,9 @@
     "face",
     "grimace",
     "teeth",
-    "#1 best",
     "awkward",
     "eek",
-    "foot",
-    "friend",
-    "mouth",
-    "mutual",
-    "nervous",
-    "snapchat"
+    "nervous"
   ],
   "🤥": [
     "lying_face",
@@ -1185,7 +1179,8 @@
     "fairy",
     "fantasy",
     "oni",
-    "tale"
+    "tale",
+    "shrek"
   ],
   "👺": [
     "goblin",
@@ -3545,7 +3540,6 @@
     "guard",
     "protect",
     "british",
-    "foot",
     "guardsman"
   ],
   "💂‍♂️": [
@@ -17223,6 +17217,12 @@
     "romania",
     "romanian"
   ],
+  "🇨🇶": [
+    "flag_sark",
+    "cq",
+    "flag",
+    "banner"
+  ],
   "🇷🇸": [
     "flag_serbia",
     "rs",
@@ -18742,7 +18742,8 @@
     "monster",
     "fairy",
     "fantasy",
-    "tale"
+    "tale",
+    "shrek"
   ],
   "🪸": [
     "coral",
@@ -18922,7 +18923,6 @@
   ],
   "🫎": [
     "moose",
-    "shrek",
     "canada",
     "sweden",
     "sven",
@@ -19163,5 +19163,34 @@
     "broken chain",
     "constraint",
     "break"
+  ],
+  "🫩": [
+    "face with bags under eyes",
+    "tired",
+    "sleepy",
+    "exhausted"
+  ],
+  "🫆": [
+    "fingerprint"
+  ],
+  "🪾": [
+    "leafless tree"
+  ],
+  "🫜": [
+    "root vegetable",
+    "radish"
+  ],
+  "🪉": [
+    "harp",
+    "music",
+    "instrument"
+  ],
+  "🪏": [
+    "shovel",
+    "tool",
+    "dig"
+  ],
+  "🫟": [
+    "splatter"
   ]
 }
