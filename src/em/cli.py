@@ -7,12 +7,31 @@ from __future__ import annotations
 import argparse
 import os
 import random
+import sys
 
 from em import __version__
 
 CUSTOM_EMOJI_PATH = os.path.join(os.path.expanduser("~/.emojis.json"))
 
 EmojiDict = dict[str, list[str]]
+
+# I think we can add it for prod version
+# (it makes an errors more user-friendly)
+sys.tracebacklimit = 0
+
+
+class ArgumentNotProvided(Exception):
+    def __str__(self):
+        return "The 'name' argument is required"
+
+
+class EmojiNotFound(Exception):
+    def __init__(self, emoji_name, additional = ""):
+        self.emoji_name = emoji_name
+        self.additional = additional
+
+    def __str__(self):
+        return f"Emoji '{self.emoji_name}' not found :(" + self.additional
 
 
 def try_copy_to_clipboard(text: str) -> bool:
@@ -46,16 +65,6 @@ def parse_emojis(filename: str | None = None) -> EmojiDict:
         return json.load(f)
 
 
-def translate(lookup: EmojiDict, code: str) -> str | None:
-    if code[0] == ":" and code[-1] == ":":
-        code = code[1:-1]
-
-    for emoji, keywords in lookup.items():
-        if code == keywords[0]:
-            return emoji
-    return None
-
-
 def do_find(lookup: EmojiDict, terms: tuple[str, ...]) -> list[tuple[str, str]]:
     """Match terms against keywords."""
     assert terms, "at least one search term required"
@@ -67,7 +76,10 @@ def do_find(lookup: EmojiDict, terms: tuple[str, ...]) -> list[tuple[str, str]]:
 
 
 def clean_name(name: str) -> str:
-    """Clean emoji name replacing specials chars by underscore"""
+    """Clean emoji names"""
+    if name[0] == ":" and name[-1] == ":":
+        name = name[1:-1]
+
     return name.replace("-", "_").replace(" ", "_").lower()
 
 
@@ -88,13 +100,13 @@ def parse_args(arg_list: list[str] | None):
     return args
 
 
-def search_emoji(lookup: dict, name: str) -> list | None:
+def search_emoji(lookup: dict, names: str | tuple) -> list | None:
     """
     Searches emojis by keyword and returns matching (name, emoji) pairs.
 
     Args:
         lookup(dict): Dict that contains pairs of emoji and their keywords
-        name(str): Name of keyword that user search
+        names(str | tuple): Name of keyword that user search
 
     Returns:
         list[tuple[str, str]]: List of (emoji_name, emoji_symbol) pairs.
@@ -109,7 +121,7 @@ def search_emoji(lookup: dict, name: str) -> list | None:
         None
     """
 
-    names = tuple(map(clean_name, name))
+    names = tuple(map(clean_name, names))
     found = do_find(lookup, names)
     if len(found) == 0:
         return None
@@ -117,10 +129,28 @@ def search_emoji(lookup: dict, name: str) -> list | None:
         return found
 
 
+def hard_search_emoji(lookup: dict, name:tuple | str) -> tuple:
+    """
+    Returns random emoji and its keyword from the given pool
+    (more accurate than search_emoji func).
+
+    Args:
+        lookup(dict): Dict that contains pairs of emoji and their keywords
+        name(str | tuple): Name of keyword that user search
+
+    Returns:
+        list[tuple[str, str]]: List of (emoji_name, emoji_symbol) pairs.
+    """
+    results = tuple(r for r in name if r is not None)
+    search_result = search_emoji(lookup, results)
+    for res in search_result:
+        if res[0] in name:
+            return res[0], res[1]
+
 
 def pick_random_emoji(emoji_pool: list | dict) -> tuple:
     """
-    Returns random emoji and its keyword from the given pool
+    Returns random emoji and its keyword from the given pool.
 
     Args:
         emoji_pool(list | dict): pool of emojis.
@@ -146,7 +176,7 @@ def make_search_msg(emojis_meta: list, is_copied: bool) -> str:
         emojis_meta: List of tuples that contains info about emoji like:
         [('paw_prints', '🐾'), ('chess_pawn', '♟️')]
 
-        is_copied: If True adds to message "Emoji {..} copied!"
+        is_copied: If True adds to message "Emoji {...} copied!"
 
     Returns:
          String that will be printed to user
@@ -174,8 +204,10 @@ def main(arg_list: list[str] | None = None):
 
     args = parse_args(arg_list)
 
-    if (not args.name) and ((not args.random) or (args.random and args.search)):
-        return "ERROR: the 'name' argument is required"
+    name = tuple(map(clean_name, args.name))
+
+    if (not name) and ((not args.random) or (args.random and args.search)):
+        raise ArgumentNotProvided
 
     lookup = parse_emojis()
 
@@ -183,8 +215,9 @@ def main(arg_list: list[str] | None = None):
         lookup.update(parse_emojis(CUSTOM_EMOJI_PATH))
 
 
+    #Used em -sr:
     if args.search and args.random:
-        search_result = search_emoji(lookup, args.name)
+        search_result = search_emoji(lookup, name)
         if search_result:
             emoji, keyword = pick_random_emoji(search_result)
             is_copied = try_copy_to_clipboard(search_result[0][1])
@@ -193,11 +226,12 @@ def main(arg_list: list[str] | None = None):
               else f"{emoji} {keyword}\nEmoji found but not copied"
 
 
+    #Used em -s:
     if args.search:
-        search_result = search_emoji(lookup, args.name)
+        search_result = search_emoji(lookup, name)
 
         if search_result is None:
-            return "Emoji not found :("
+            raise EmojiNotFound("".join(name))
 
         if len(search_result) == 1 and not args.no_copy:
             is_copied = try_copy_to_clipboard(search_result[0][1])
@@ -207,12 +241,25 @@ def main(arg_list: list[str] | None = None):
             return make_search_msg(search_result, is_copied=False)
 
 
+    #Used em -r:
     if args.random:
         emoji, keyword = pick_random_emoji(lookup)
         is_copied = try_copy_to_clipboard(emoji)
 
         return f"{emoji} {keyword}\nEmoji {emoji} copied!" if is_copied \
           else f"{emoji} {keyword}\nEmoji found but not copied"
+
+
+    # If user don't enter args at all:
+    search_result = hard_search_emoji(lookup, name)
+    if search_result:
+        keyword, emoji = search_result
+    else:
+        raise EmojiNotFound("".join(name), "\n\n(but you can try -s arg)")
+
+    is_copied = try_copy_to_clipboard(emoji)
+    return f"{emoji} {keyword}\nEmoji {emoji} copied!" if is_copied \
+        else f"{emoji} {keyword}\nEmoji found but not copied"
 
 
 if __name__ == "__main__":

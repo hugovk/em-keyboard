@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import random
 import shlex
-
 import pytest
 
 from em import cli
@@ -10,69 +8,69 @@ from em import cli
 copier_deps_installed = cli.try_copy_to_clipboard("checking if copy works")
 
 
-@pytest.mark.parametrize(
-    "test_args, expected_output",
-    [
-        ("star", "⭐"),
-        (":star:", "⭐"),
-        ("STAR", "⭐"),
-        (":Star:", "⭐"),
-        ("--search ukraine", "🇺🇦  flag_ukraine"),
-        ("--random", "😽  kissing_cat"),
-        ("--random --no-copy", "😽  kissing_cat"),
-        ("--search big tent", "🎪  circus_tent"),
-    ],
-)
-def test_success(
-    test_args: str, expected_output: str, capsys: pytest.CaptureFixture
-) -> None:
-    # Arrange
-    random.seed(123)
-
-    # Act
-    ret = cli.main(shlex.split(test_args))
-
-    # Assert
-    output = capsys.readouterr().out.rstrip()
-    if copier_deps_installed and "--no-copy" not in test_args:
-        assert output == f"Copied! {expected_output}"
-    else:
-        assert output == expected_output
-    assert ret == 0
-
 
 @pytest.mark.parametrize(
-    "test_args",
+    "args, expected_out",
     [
-        "xxx --no-copy",
-        "--search twenty_o_clock",
-        "--search",
-    ],
+        ("-s sky",
+         "🥃 tumbler_glass\n"
+         "🏙️ cityscape\n"
+         "🌆 cityscape_at_dusk\n"
+         "🪂 parachute\n"
+         "🌔 waxing_gibbous_moon\n"
+         "🌙 crescent_moon\n"
+         "🌞 sun_with_face\n"
+         "🌌 milky_way\n"
+         "☁️ cloud\n"
+         "🌈 rainbow\n"
+         "🈳 japanese_vacancy_button"),
+
+        ("-s warn",
+         "🚨 police_car_light\n"
+         "🚧 construction\n"
+         "⚠️ warning\n"
+         "🚸 children_crossing\n"
+         "❕ white_exclamation_mark\n"
+         "❗ exclamation_mark")
+    ]
 )
-def test_error(test_args: str, capsys: pytest.CaptureFixture) -> None:
+def test_search_with_s_arg(args, expected_out):
     # Act
-    ret = cli.main(shlex.split(test_args))
+    ret = cli.main(shlex.split(args))
+    # Assert
+    assert ret == expected_out
+
+
+sky_dataset = [
+    ("cityscape", "🏙️ cityscape\nEmoji 🏙️ copied!"),
+    ("cityscape_at_dusk", "🌆 cityscape_at_dusk\nEmoji 🌆 copied!"),
+    ("parachute", "🪂 parachute\nEmoji 🪂 copied!"),
+    ("waxing_gibbous_moon", "🌔 waxing_gibbous_moon\nEmoji 🌔 copied!"),
+    ("crescent_moon", "🌙 crescent_moon\nEmoji 🌙 copied!"),
+    ("sun_with_face", "🌞 sun_with_face\nEmoji 🌞 copied!"),
+    ("milky_way", "🌌 milky_way\nEmoji 🌌 copied!"),
+    ("cloud", "☁️ cloud\nEmoji ☁️ copied!"),
+    ("rainbow", "🌈 rainbow\nEmoji 🌈 copied!"),
+    ("japanese_vacancy_button", "🈳 japanese_vacancy_button\nEmoji 🈳 copied!")
+]
+
+@pytest.mark.parametrize("args, expected_out",sky_dataset)
+def test_hard_search(args, expected_out):
+    # Act
+    ret = cli.main(shlex.split(args))
 
     # Assert
-    output = capsys.readouterr().out.rstrip()
-    assert output == ""
-    assert ret != 0
+    assert ret == expected_out
 
 
-def test_search_star(capsys: pytest.CaptureFixture) -> None:
+def test_random_from_search():
     # Arrange
-    args = "--search star"
-    expected = (
-        "💫  dizzy",
-        "⭐  star",
-        "✳️  eight_spoked_asterisk",
-    )
+    args = "-sr sky"
 
     # Act
     ret = cli.main(shlex.split(args))
 
     # Assert
-    output = capsys.readouterr().out.rstrip()
-    for arg in expected:
-        assert arg in output
-    assert ret == 0
+    assert any(ret == data[1] for data in sky_dataset)
+
+
