@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import shlex
+
 import pytest
 
 from em import cli
@@ -8,31 +9,33 @@ from em import cli
 copier_deps_installed = cli.try_copy_to_clipboard("checking if copy works")
 
 
-
 @pytest.mark.parametrize(
     "args, expected_out",
     [
-        ("-s sky",
-         "🥃 tumbler_glass\n"
-         "🏙️ cityscape\n"
-         "🌆 cityscape_at_dusk\n"
-         "🪂 parachute\n"
-         "🌔 waxing_gibbous_moon\n"
-         "🌙 crescent_moon\n"
-         "🌞 sun_with_face\n"
-         "🌌 milky_way\n"
-         "☁️ cloud\n"
-         "🌈 rainbow\n"
-         "🈳 japanese_vacancy_button"),
-
-        ("-s warn",
-         "🚨 police_car_light\n"
-         "🚧 construction\n"
-         "⚠️ warning\n"
-         "🚸 children_crossing\n"
-         "❕ white_exclamation_mark\n"
-         "❗ exclamation_mark")
-    ]
+        (
+            "-s sky",
+            "🥃 tumbler_glass\n"
+            "🏙️ cityscape\n"
+            "🌆 cityscape_at_dusk\n"
+            "🪂 parachute\n"
+            "🌔 waxing_gibbous_moon\n"
+            "🌙 crescent_moon\n"
+            "🌞 sun_with_face\n"
+            "🌌 milky_way\n"
+            "☁️ cloud\n"
+            "🌈 rainbow\n"
+            "🈳 japanese_vacancy_button",
+        ),
+        (
+            "-s warn",
+            "🚨 police_car_light\n"
+            "🚧 construction\n"
+            "⚠️ warning\n"
+            "🚸 children_crossing\n"
+            "❕ white_exclamation_mark\n"
+            "❗ exclamation_mark",
+        ),
+    ],
 )
 def test_search_with_s_arg(args, expected_out):
     # Act
@@ -51,10 +54,11 @@ sky_dataset = [
     ("milky_way", "🌌 milky_way\nEmoji 🌌 copied!"),
     ("cloud", "☁️ cloud\nEmoji ☁️ copied!"),
     ("rainbow", "🌈 rainbow\nEmoji 🌈 copied!"),
-    ("japanese_vacancy_button", "🈳 japanese_vacancy_button\nEmoji 🈳 copied!")
+    ("japanese_vacancy_button", "🈳 japanese_vacancy_button\nEmoji 🈳 copied!"),
 ]
 
-@pytest.mark.parametrize("args, expected_out",sky_dataset)
+
+@pytest.mark.parametrize("args, expected_out", sky_dataset)
 def test_hard_search(args, expected_out):
     # Act
     ret = cli.main(shlex.split(args))
@@ -72,5 +76,3 @@ def test_random_from_search():
 
     # Assert
     assert any(ret == data[1] for data in sky_dataset)
-
-

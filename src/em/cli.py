@@ -26,7 +26,7 @@ class ArgumentNotProvided(Exception):
 
 
 class EmojiNotFound(Exception):
-    def __init__(self, emoji_name, additional = ""):
+    def __init__(self, emoji_name, additional=""):
         self.emoji_name = emoji_name
         self.additional = additional
 
@@ -129,7 +129,7 @@ def search_emoji(lookup: dict, names: str | tuple) -> list | None:
         return found
 
 
-def hard_search_emoji(lookup: dict, name:tuple | str) -> tuple:
+def hard_search_emoji(lookup: dict, name: tuple | str) -> tuple:
     """
     Returns random emoji and its keyword from the given pool
     (more accurate than search_emoji func).
@@ -214,19 +214,20 @@ def main(arg_list: list[str] | None = None):
     if os.path.isfile(CUSTOM_EMOJI_PATH):
         lookup.update(parse_emojis(CUSTOM_EMOJI_PATH))
 
-
-    #Used em -sr:
+    # Used em -sr:
     if args.search and args.random:
         search_result = search_emoji(lookup, name)
         if search_result:
             emoji, keyword = pick_random_emoji(search_result)
             is_copied = try_copy_to_clipboard(search_result[0][1])
 
-            return f"{emoji} {keyword}\nEmoji {emoji} copied!" if is_copied \
-              else f"{emoji} {keyword}\nEmoji found but not copied"
+            return (
+                f"{emoji} {keyword}\nEmoji {emoji} copied!"
+                if is_copied
+                else f"{emoji} {keyword}\nEmoji found but not copied"
+            )
 
-
-    #Used em -s:
+    # Used em -s:
     if args.search:
         search_result = search_emoji(lookup, name)
 
@@ -240,15 +241,16 @@ def main(arg_list: list[str] | None = None):
         else:
             return make_search_msg(search_result, is_copied=False)
 
-
-    #Used em -r:
+    # Used em -r:
     if args.random:
         emoji, keyword = pick_random_emoji(lookup)
         is_copied = try_copy_to_clipboard(emoji)
 
-        return f"{emoji} {keyword}\nEmoji {emoji} copied!" if is_copied \
-          else f"{emoji} {keyword}\nEmoji found but not copied"
-
+        return (
+            f"{emoji} {keyword}\nEmoji {emoji} copied!"
+            if is_copied
+            else f"{emoji} {keyword}\nEmoji found but not copied"
+        )
 
     # If user don't enter args at all:
     search_result = hard_search_emoji(lookup, name)
@@ -258,10 +260,12 @@ def main(arg_list: list[str] | None = None):
         raise EmojiNotFound("".join(name), "\n\n(but you can try -s arg)")
 
     is_copied = try_copy_to_clipboard(emoji)
-    return f"{emoji} {keyword}\nEmoji {emoji} copied!" if is_copied \
+    return (
+        f"{emoji} {keyword}\nEmoji {emoji} copied!"
+        if is_copied
         else f"{emoji} {keyword}\nEmoji found but not copied"
+    )
 
 
 if __name__ == "__main__":
     print(main())
-
