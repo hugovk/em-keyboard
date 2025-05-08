@@ -74,6 +74,7 @@ def parse_args(arg_list: list[str] | None):
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    parser.color = True  # type: ignore[attr-defined]
     parser.add_argument("name", nargs="*", help="Text to convert to emoji")
     parser.add_argument("-s", "--search", action="store_true", help="Search for emoji")
     parser.add_argument("-r", "--random", action="store_true", help="Get random emoji")
