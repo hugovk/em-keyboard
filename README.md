@@ -50,12 +50,20 @@ Let's find some emoji, by color:
 ```console
 $ em -s yellow
 💛  yellow_heart
+👩  woman
+🐤  baby_chick
+🐠  tropical_fish
+🌻  sunflower
 🌼  blossom
+🚧  construction
 🌕  full_moon
 ⭐  star
+📒  ledger
 🚸  children_crossing
+🔰  japanese_symbol_for_beginner
 🟡  yellow_circle
 🟨  yellow_square
+🫚  ginger_root
 ```
 
 <!-- [[[end]]] -->
@@ -67,6 +75,28 @@ If there's only a single search result, it's copied:
 ```console
 $ em -s ukraine
 Copied! 🇺🇦  flag_ukraine
+```
+
+<!-- [[[end]]] -->
+
+Pick a random emoji:
+
+<!-- [[[cog run("em --random") ]]] -->
+
+```console
+$ em --random
+Copied! 💤  zzz
+```
+
+<!-- [[[end]]] -->
+
+Pick a random emoji:
+
+<!-- [[[cog run("em --search yellow --random") ]]] -->
+
+```console
+$ em --search yellow --random
+Copied! 🟨  yellow_square
 ```
 
 <!-- [[[end]]] -->

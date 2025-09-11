@@ -21,6 +21,7 @@ copier_deps_installed = cli.try_copy_to_clipboard("checking if copy works")
         ("--random", "😽  kissing_cat"),
         ("--random --no-copy", "😽  kissing_cat"),
         ("--search big tent", "🎪  circus_tent"),
+        ("--search camp --random", "🏕️  camping"),
     ],
 )
 def test_success(

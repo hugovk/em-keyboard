@@ -101,7 +101,7 @@ def main(arg_list: list[str] | None = None) -> str | int:
     if os.path.isfile(CUSTOM_EMOJI_PATH):
         lookup.update(parse_emojis(CUSTOM_EMOJI_PATH))
 
-    if args.random:
+    if args.random and not args.search:
         import random
 
         emoji, keywords = random.choice(list(lookup.items()))
@@ -119,6 +119,11 @@ def main(arg_list: list[str] | None = None) -> str | int:
     if args.search:
         # Lookup the search term.
         found = do_find(lookup, names)
+
+        if args.random and len(found) >= 2:
+            import random
+
+            found = [random.choice(found)]
 
         # print them to the screen.
         for name, emoji in found:
