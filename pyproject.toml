@@ -92,13 +92,13 @@ lint.ignore = [
   "E226",   # Missing whitespace around arithmetic operator
   "E241",   # Multiple spaces after ','
   "PIE790", # flake8-pie: unnecessary-placeholder
-  "UP038",  # Makes code slower and more verbose
 ]
 lint.flake8-import-conventions.aliases.datetime = "dt"
 lint.flake8-import-conventions.banned-from = [ "datetime" ]
 lint.flake8-pytest-style.parametrize-names-type = "csv"
 lint.isort.known-first-party = [ "em" ]
 lint.isort.required-imports = [ "from __future__ import annotations" ]
+lint.future-annotations = true
 
 [tool.pyproject-fmt]
 max_supported_python = "3.14"
