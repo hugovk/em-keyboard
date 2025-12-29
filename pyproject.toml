@@ -106,6 +106,18 @@ max_supported_python = "3.14"
 [tool.pytest.ini_options]
 testpaths = [ "tests" ]
 
+[tool.coverage.run]
+omit = [
+  "**/__main__.py",
+]
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+  # Don't complain if non-runnable code isn't run:
+  "if __name__ == .__main__.:",
+]
+
 [tool.mypy]
 pretty = true
 show_error_codes = true
