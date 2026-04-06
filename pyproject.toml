@@ -40,7 +40,7 @@ dependencies = [
   "pyperclip",
 ]
 optional-dependencies.tests = [
-  "pytest",
+  "pytest>=9",
   "pytest-cov",
 ]
 urls.Changelog = "https://github.com/hugovk/em-keyboard/releases"
@@ -103,7 +103,8 @@ exclude = [
 ]
 
 [tool.pytest]
-ini_options.testpaths = [ "tests" ]
+minversion = "9.0"
+testpaths = [ "tests" ]
 
 [tool.coverage]
 run.omit = [
