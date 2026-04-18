@@ -126,18 +126,12 @@ def main(arg_list: list[str] | None = None) -> str | int:
 
         # print them to the screen.
         for name, emoji in found:
-            # Some registered emoji have no value.
-            try:
-                # Copy the results (and say so!) to the clipboard.
-                if not no_copy and len(found) == 1:
-                    copied = try_copy_to_clipboard(emoji)
-                else:
-                    copied = False
-                print(f"Copied! {emoji}  {name}" if copied else f"{emoji}  {name}")
-
-            # Sometimes, an emoji will have no value.
-            except TypeError:
-                pass
+            # Copy the results (and say so!) to the clipboard.
+            if not no_copy and len(found) == 1:
+                copied = try_copy_to_clipboard(emoji)
+            else:
+                copied = False
+            print(f"Copied! {emoji}  {name}" if copied else f"{emoji}  {name}")
 
         if len(found):
             return 0
