@@ -15,8 +15,8 @@ keywords = [
   "keyboard",
   "search",
 ]
-license = "ISC"
-license-files = [ "LICENSE" ]
+license = "ISC AND MIT"
+license-files = [ "LICENSE", "src/em/LICENSE" ]
 maintainers = [ { name = "Hugo van Kemenade" } ]
 authors = [ { name = "Kenneth Reitz", email = "me@kennethreitz.org" } ]
 requires-python = ">=3.10"
