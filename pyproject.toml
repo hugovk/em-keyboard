@@ -60,7 +60,7 @@ build.targets.wheel.exclude = [ "src/em/LICENSE" ]
 
 [tool.ruff]
 fix = true
-lint.select = [
+lint.extend-select = [
   "C4",     # flake8-comprehensions
   "E",      # pycodestyle errors
   "EM",     # flake8-errmsg
@@ -69,6 +69,7 @@ lint.select = [
   "ICN",    # flake8-import-conventions
   "ISC",    # flake8-implicit-str-concat
   "LOG",    # flake8-logging
+  "PERF",   # perflint
   "PGH",    # pygrep-hooks
   "PIE",    # flake8-pie
   "PT",     # flake8-pytest-style
