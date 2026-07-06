@@ -52,11 +52,11 @@ scripts.em = "em.cli:main"
 version.source = "vcs"
 version.raw-options.local_scheme = "no-local-version"
 build.hooks.vcs.version-file = "src/em/_version.py"
+build.targets.wheel.packages = [ "src/em" ]
+build.targets.wheel.exclude = [ "src/em/LICENSE" ]
 build.targets.sdist.exclude = [
   "src/em/emoji-en-US.json", # temporary copy of "src/em/emojis.json"
 ]
-build.targets.wheel.packages = [ "src/em" ]
-build.targets.wheel.exclude = [ "src/em/LICENSE" ]
 
 [tool.ruff]
 fix = true
@@ -98,11 +98,11 @@ lint.future-annotations = true
 max_supported_python = "3.15"
 
 [tool.mypy]
-pretty = true
-show_error_codes = true
 exclude = [
   "^scripts/",
 ]
+pretty = true
+show_error_codes = true
 
 [tool.pytest]
 minversion = "9.0"
