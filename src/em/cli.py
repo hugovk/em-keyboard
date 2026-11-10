@@ -46,6 +46,8 @@ def parse_emojis(filename: str | None = None) -> EmojiDict:
 
 
 def translate(lookup: EmojiDict, code: str) -> str | None:
+    if not code:
+        return None
     if code[0] == ":" and code[-1] == ":":
         code = code[1:-1]
 

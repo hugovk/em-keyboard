@@ -60,6 +60,16 @@ def test_error(test_args: str, capsys: pytest.CaptureFixture) -> None:
     assert ret != 0
 
 
+def test_empty_name_no_crash(capsys: pytest.CaptureFixture) -> None:
+    # Act
+    ret = cli.main([""])
+
+    # Assert
+    output = capsys.readouterr().out.rstrip()
+    assert output == ""
+    assert ret == 1
+
+
 def test_search_star(capsys: pytest.CaptureFixture) -> None:
     # Arrange
     args = "--search star"
