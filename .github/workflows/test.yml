@@ -15,7 +15,8 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-          - "pypy3.11"
+          - "pypy3.12"
+          - "3.16"
           - "3.15"
           - "3.14"
           - "3.13"
