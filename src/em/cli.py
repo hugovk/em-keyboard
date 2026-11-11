@@ -84,15 +84,14 @@ def parse_args(arg_list: list[str] | None):
         "-V", "--version", action="version", version=f"%(prog)s {__version__}"
     )
     args = parser.parse_args(arg_list)
+    if not args.name and not args.random:
+        parser.error("the 'name' argument is required")
     return args
 
 
 def main(arg_list: list[str] | None = None) -> str | int:
     args = parse_args(arg_list)
     no_copy = args.no_copy
-
-    if not args.name and not args.random:
-        return "Error: the 'name' argument is required"
 
     # Grab the lookup dictionary.
     lookup = parse_emojis()
