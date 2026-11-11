@@ -47,7 +47,6 @@ def test_success(
     [
         "xxx --no-copy",
         "--search twenty_o_clock",
-        "--search",
     ],
 )
 def test_error(test_args: str, capsys: pytest.CaptureFixture) -> None:
@@ -58,6 +57,19 @@ def test_error(test_args: str, capsys: pytest.CaptureFixture) -> None:
     output = capsys.readouterr().out.rstrip()
     assert output == ""
     assert ret != 0
+
+
+@pytest.mark.parametrize("test_args", ["", "--search"])
+def test_error_name_required(test_args: str, capsys: pytest.CaptureFixture) -> None:
+    # Act
+    with pytest.raises(SystemExit) as exc_info:
+        cli.main(shlex.split(test_args))
+
+    # Assert
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "the 'name' argument is required" in captured.err
+    assert exc_info.value.code == 2
 
 
 def test_search_star(capsys: pytest.CaptureFixture) -> None:
